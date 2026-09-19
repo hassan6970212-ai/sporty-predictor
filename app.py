@@ -11,7 +11,7 @@ uploaded = st.file_uploader("Upload ticket", type=["jpg","png","jpeg"])
 
 if uploaded:
     img = Image.open(uploaded)
-    st.image(img, caption="Your Ticket", use_column_width=True)
+    st.image(img, caption="Your Ticket", use_container_width=True)
     
     st.success("Image uploaded successfully! ✅")
     
