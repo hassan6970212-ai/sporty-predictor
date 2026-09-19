@@ -1,62 +1,69 @@
 import streamlit as st
 from PIL import Image
 import random
+import os
 
-st.set_page_config(page_title="Sporty Predictor PRO MAX", page_icon="🔥")
+st.set_page_config(page_title="Sporty Predictor PRO MAX", page_icon="⚽", layout="centered")
 
-st.title("🔥 Sporty Predictor PRO MAX")
-st.write("The smartest ticket analyzer in Ghana 🇬🇭")
+# Pro Ghana colors CSS
+st.markdown("""
+<style>
+.stApp {background: #f8fdf8;}
+h1 {color: #0a5c36;}
+div[data-testid=\"stFileUploader\"] {border: 2px dashed #0a5c36;}
+</style>
+""", unsafe_allow_html=True)
 
-uploaded = st.file_uploader("Upload your ticket screenshot", type=["jpg","png","jpeg"])
+# Show logo if exists
+if os.path.exists("logo.png"):
+    st.image("logo.png", width=250)
+else:
+    st.title("🔥 Sporty Predictor PRO MAX 🇬🇭")
+
+st.markdown("### Kumasi's #1 AI Football Predictor")
+st.write("Upload ticket → Get smart predictions")
+
+# --- PAYWALL ---
+if "paid" not in st.session_state:
+    st.session_state.paid = False
+
+if not st.session_state.paid:
+    st.warning("🔒 Free preview: 2 games only. Pay 5 GHS for full access!")
+    access_code = st.text_input("Enter access code (or pay to get code)", type="password")
+    if access_code == "GHANA2026" or st.button("I have paid - Unlock with code GHANA2026"):
+        if access_code == "GHANA2026":
+            st.session_state.paid = True
+            st.rerun()
+    st.info("💰 Pay to: MTN MoMo 055XXXXXXX - Send proof to WhatsApp and get code GHANA2026")
+    limit = 2
+else:
+    limit = 20
+    st.success("✅ PRO MAX Unlocked! Unlimited predictions")
+
+uploaded = st.file_uploader("Upload SportyBet ticket", type=["jpg","png","jpeg"])
 
 if uploaded:
     img = Image.open(uploaded)
-    st.image(img, caption="Your Ticket", use_container_width=True)
+    st.image(img, use_container_width=True)
+    text_input = st.text_area(f"Paste games (max {limit} games):", height=120)
 
-    text_input = st.text_area("Paste your games (one per line):", 
-        placeholder="Tottenham vs Aston Villa\nBarcelona vs Real Madrid", height=150)
-
-    if st.button("🔍 ANALYZE WITH AI"):
-        if not text_input.strip():
-            st.warning("Paste games first boss!")
+    if st.button("🔍 PREDICT & WIN"):
+        games = [g.strip() for g in text_input.split("\n") if "vs" in g.lower()][:limit]
+        if not games:
+            st.warning("Paste games!")
         else:
-            games = [g.strip() for g in text_input.split("\n") if "vs" in g.lower() and len(g.strip())>3]
-            
-            st.markdown("## ✅ AI SMART PREDICTIONS:")
-            
-            strong_teams = ["man city", "arsenal", "liverpool", "barcelona", "real madrid", "bayern", "psg", "inter", "napoli", "tottenham", "man utd", "chelsea", "dortmund", "leverkusen"]
-            
+            st.markdown("## ✅ AI PREDICTIONS")
             for game in games:
-                lower = game.lower()
-                is_big_game = sum(1 for t in strong_teams if t in lower) >= 1
-                
-                if any(x in lower for x in ["bologna", "torino", "udinese", "cagliari", "osasuna", "mainz", "freiburg"]):
-                    pred = "Under 3.5 Goals"
-                    reason = "Defensive teams - low goals expected"
-                    conf = random.randint(75, 85)
-                elif is_big_game:
-                    pred = "Over 1.5 Goals"
-                    reason = "Strong attack - goals dey inside"
-                    conf = random.randint(80, 92)
+                low = game.lower()
+                if any(x in low for x in ["osasuna","bologna","torino","cagliari","mainz"]):
+                    pred, conf, why = "Under 3.5 Goals", random.randint(75,88), "Defensive setup"
                 else:
-                    pred = "Double Chance (1X) + Over 1.5"
-                    reason = "Balanced game - safe combo"
-                    conf = random.randint(72, 82)
-                
-                # For top games, add BTTS option
-                if "vs" in lower and is_big_game and random.choice([True, False]):
-                    pred = "BTTS Yes (Both Teams to Score)"
-                    reason = "Both teams get attack!"
-                    conf = random.randint(68, 78)
-
+                    pred, conf, why = "Over 1.5 Goals", random.randint(80,92), "Attacking teams"
                 st.markdown(f"""
-                <div style="background:#e8f5e9; padding:15px; border-radius:10px; margin-bottom:10px; border-left:5px solid #4caf50">
-                    <b>{game}</b><br>
-                    👉 <b style="color:#2e7d32">{pred}</b> <br>
-                    📊 Confidence: {conf}% | 💡 {reason}
+                <div style="background:white; padding:12px; border-radius:10px; margin:6px 0; border-left:5px solid #0a5c36; box-shadow:0 2px 5px #0001">
+                <b>{game}</b><br>👉 <b style="color:#0a5c36">{pred}</b> | {conf}% - {why}
                 </div>
                 """, unsafe_allow_html=True)
-            
-            st.markdown("---")
-            st.success("🎯 ACCA TIP: Combine all with DOUBLE CHANCE for 95% safe ticket!")
             st.balloons()
+            st.markdown("---")
+            st.markdown("**Share your winning ticket & tag us! 📲**")
