@@ -1,7 +1,8 @@
-import streamlit as st
+import streamlit as st 
+# Google Search Console Verification
+st.markdown('<meta name="google-site-verification" content="vK_N87B4KvUTkWW6wW6hft8xfP1VERq4YjDWCSilJRo" />', unsafe_allow_html=True)
+
 from PIL import Image
-import pandas as pd
-import random
 
 st.set_page_config(page_title="Sporty Predictor PRO MAX", page_icon="⚽", layout="centered")
 
