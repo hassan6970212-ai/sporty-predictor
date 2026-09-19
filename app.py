@@ -1,7 +1,7 @@
 import streamlit as st
 from PIL import Image
 import random
-import os
+
 
 st.set_page_config(page_title="Sporty Predictor PRO MAX", page_icon="⚽", layout="centered")
 
@@ -14,11 +14,15 @@ div[data-testid=\"stFileUploader\"] {border: 2px dashed #0a5c36;}
 </style>
 """, unsafe_allow_html=True)
 
-# Show logo if exists
-if os.path.exists("logo.png"):
-    st.image("logo.png", width=250)
-else:
-    st.title("🔥 Sporty Predictor PRO MAX 🇬🇭")
+# Pro Logo Design inside app
+st.markdown("""
+<div style="background:#0a5c36; padding:20px; border-radius:15px; text-align:center; margin-bottom:20px">
+    <div style="font-size:50px">⚽📈</div>
+    <h1 style="color:#ffd700; margin:0">Sporty Predictor</h1>
+    <h2 style="color:white; margin:0">PRO MAX</h2>
+    <p style="color:#ffd700">🇬🇭 GHANA'S #1</p>
+</div>
+""", unsafe_allow_html=True)
 
 st.markdown("### Kumasi's #1 AI Football Predictor")
 st.write("Upload ticket → Get smart predictions")
