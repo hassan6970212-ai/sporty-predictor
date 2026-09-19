@@ -1,4 +1,5 @@
-import streamlit as st 
+import streamlit as st
+import random, string
 # Google Search Console Verification
 st.markdown('<meta name="google-site-verification" content="vK_N87B4KvUTkWW6wW6hft8xfP1VERq4YjDWCSilJRo" />', unsafe_allow_html=True)
 
@@ -20,16 +21,44 @@ st.markdown("### 🔥 AI Football Ticket Analyzer")
 if 'unlocked' not in st.session_state:
     st.session_state.unlocked = False
 
+
+OWNER_CODE = "GHANA2026"
+VALID_CODES = ["SP-8472", "SP-2931", "SP-5528", "SP-1190"]
+
+if "is_owner" not in st.session_state:
+    st.session_state.is_owner = False
+
 if not st.session_state.unlocked:
     st.warning("🔒 Free preview: 2 games only. Pay 5 GHS for full access!")
-    code = st.text_input("Enter access code (or pay to get code)", type="default", placeholder="Type GHANA2026")
-    if code == "GHANA2026":
+    code = st.text_input("Enter access code (or pay to get code)", type="password", placeholder="Enter code after payment")
+    
+    if code == OWNER_CODE:
         st.session_state.unlocked = True
+        st.session_state.is_owner = True
         st.rerun()
-    st.info("💰 **Pay to: MTN MoMo 0543799980** - Send proof to WhatsApp and get code GHANA2026")
+    elif code in VALID_CODES:
+        st.session_state.unlocked = True
+        st.session_state.is_owner = False
+        st.rerun()
+    elif code != "":
+        st.error("❌ Wrong code!")
+
+    st.info("💰 **Pay to: MTN MoMo 0543799980** - Send proof to WhatsApp and get your OWN code!")
     st.markdown("---")
 
-uploaded_file = st.file_uploader("Upload SportyBet ticket", type=['jpg','png','jpeg'])
+if st.session_state.get("is_owner", False):
+    st.success("👑 OWNER MODE - GHANA2026")
+    if st.button("🎲 Generate NEW Customer Code"):
+        new_code = "SP-" + ''.join(random.choices(string.digits, k=4))
+        st.code(new_code)
+        st.write(f"Send this to customer. Add it to VALID_CODES list!")
+    if st.button("Log out"):
+        st.session_state.unlocked = False
+        st.session_state.is_owner = False
+        st.rerun()
+    st.markdown("---")
+
+uploaded_file = st.file_uploader("Upload SportyBet ticket", type=['jpg','png','jpeg'], key="ticket_uploader", accept_multiple_files=False)
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file)
