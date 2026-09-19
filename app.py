@@ -38,7 +38,7 @@ if not st.session_state.paid:
         if access_code == "GHANA2026":
             st.session_state.paid = True
             st.rerun()
-    st.info("💰 Pay to: MTN MoMo 055XXXXXXX - Send proof to WhatsApp and get code GHANA2026")
+    st.info("💰 Pay to: MTN MoMo 0543799980 - Send proof to WhatsApp and get code GHANA2026")
     limit = 2
 else:
     limit = 20
